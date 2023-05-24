@@ -19,23 +19,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-   <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="Hello"
-       android:layout_marginTop="20dp"
-       android:textColor="@color/colorAccent"
-       android:textSize="18sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp"/>
 
-   <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="All tasks"
-       fontPath="fonts/nunito_extra_bold.ttf"
-       android:textStyle="bold"
-       android:textColor="@color/colorAccent"
-       android:textSize="28sp"
-       tools:ignore="MissingPrefix" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All tasks"
+                fontPath="fonts/nunito_extra_bold.ttf"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent"
+                android:textSize="28sp"
+                tools:ignore="MissingPrefix" />
 
         </LinearLayout>
 
@@ -56,50 +56,23 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="649dp"
             android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:id="@+id/noDataImage"
-                android:layout_gravity="center"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/taskRecycler"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/taskRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="685dp" />
 
         </FrameLayout>
 
-   <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="70dp"
-       android:text="Add Task"
-       android:drawablePadding="10dp"
-       android:paddingTop="10dp"
-       android:id="@+id/addTask"
-       android:layout_gravity="center"
-       android:textColor="@color/colorAccent"
-       android:textSize="20sp"
-       android:drawableLeft="@drawable/ic_add_black_24dp"
-       android:textAlignment="center"
-       android:layout_weight="0.5"
-       android:layout_marginBottom="20dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:text="    View Calender"
-            android:drawablePadding="10dp"
-            android:paddingTop="10dp"
-            android:id="@+id/viewCalender"
-            android:layout_gravity="center"
-            android:textColor="@color/colorAccent"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            android:layout_weight="0.5"
-            android:layout_marginBottom="20dp"/>
+    <Button
+        android:id="@+id/addTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Task"
+        android:layout_marginBottom="20dp"/>
 
 
     </LinearLayout>
