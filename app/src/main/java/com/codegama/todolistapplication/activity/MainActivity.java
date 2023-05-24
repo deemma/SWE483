@@ -35,6 +35,10 @@ public class MainActivity extends BaseActivity implements CreateTaskBottomSheetF
     RecyclerView taskRecycler;
     @BindView(R.id.addTask)
     Button addTask;
+
+    @BindView(R.id.noDataImage)
+    ImageView noDataImage;
+
     TaskAdapter taskAdapter;
     List<Task> tasks = new ArrayList<>();
 
@@ -51,7 +55,7 @@ public class MainActivity extends BaseActivity implements CreateTaskBottomSheetF
         ComponentName receiver = new ComponentName(this, AlarmBroadcastReceiver.class);
         PackageManager pm = getPackageManager();
         pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-//        Glide.with(getApplicationContext()).load(R.drawable.first_note).into(noDataImage);
+        Glide.with(getApplicationContext()).load(R.drawable.first_note).into(noDataImage);
 
         addTask.setOnClickListener(view -> {
             CreateTaskBottomSheetFragment createTaskBottomSheetFragment = new CreateTaskBottomSheetFragment();
@@ -86,12 +90,12 @@ public class MainActivity extends BaseActivity implements CreateTaskBottomSheetF
                 return tasks;
             }
 
-//            @Override
-//            protected void onPostExecute(List<Task> tasks) {
-//                super.onPostExecute(tasks);
-//                noDataImage.setVisibility(tasks.isEmpty() ? View.VISIBLE : View.GONE);
-//                setUpAdapter();
-//            }
+            @Override
+            protected void onPostExecute(List<Task> tasks) {
+                super.onPostExecute(tasks);
+                noDataImage.setVisibility(tasks.isEmpty() ? View.VISIBLE : View.GONE);
+                setUpAdapter();
+            }
         }
 
         GetSavedTasks savedTasks = new GetSavedTasks();
