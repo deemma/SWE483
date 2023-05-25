@@ -103,4 +103,21 @@ public class Task implements Serializable {
     public void setTaskDescrption(String taskDescrption) {
         this.taskDescrption = taskDescrption;
     }
+    public String getTaskPriority() {
+        return firstAlarmTime;
+    }
+
+    public void setTaskPriority(String taskDescrption) {
+        this.firstAlarmTime = taskDescrption;
+    }
+
+
+    public String getTaskPeriod() {
+        return lastAlarm;
+    }
+
+    public void setTaskPeriod(String taskDescrption) {
+        this.lastAlarm = taskDescrption;
+    }
+
 }

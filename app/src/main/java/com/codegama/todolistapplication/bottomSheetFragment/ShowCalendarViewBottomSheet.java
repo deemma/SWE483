@@ -98,7 +98,7 @@ public class ShowCalendarViewBottomSheet extends BottomSheetDialogFragment {
 
     public List<EventDay> getHighlitedDays() {
         List<EventDay> events = new ArrayList<>();
-
+        if (tasks != null && tasks.size() > 0) {
         for(int i = 0; i < tasks.size(); i++) {
             Calendar calendar = Calendar.getInstance();
             String[] items1 = tasks.get(i).getDate().split("-");
@@ -110,7 +110,7 @@ public class ShowCalendarViewBottomSheet extends BottomSheetDialogFragment {
             calendar.set(Calendar.MONTH, Integer.parseInt(month) - 1);
             calendar.set(Calendar.YEAR, Integer.parseInt(year));
             events.add(new EventDay(calendar, R.drawable.dot));
-        }
+        }}
         return events;
     }
 

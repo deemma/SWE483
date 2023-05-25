@@ -18,9 +18,12 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,12 +54,17 @@ import butterknife.Unbinder;
 import static android.content.Context.ALARM_SERVICE;
 
 public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
-
+    private View contentView;
     Unbinder unbinder;
     @BindView(R.id.addTaskTitle)
     EditText addTaskTitle;
-    @BindView(R.id.addTaskDescription)
-    EditText addTaskDescription;
+    @BindView(R.id.nature_spinner)
+    Spinner addTaskDescriptionSpinner;
+    @BindView(R.id.priority_spinner)
+    Spinner addTaskPrioritySpinner;
+
+    @BindView(R.id.period_spinner)
+    Spinner addTaskPeriodSpinner;
     @BindView(R.id.taskDate)
     EditText taskDate;
     @BindView(R.id.taskTime)
@@ -91,6 +99,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         }
     };
 
+
     public void setTaskId(int taskId, boolean isEdit, setRefreshListener setRefreshListener, MainActivity activity) {
         this.taskId = taskId;
         this.isEdit = isEdit;
@@ -106,10 +115,53 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         View contentView = View.inflate(getContext(), R.layout.fragment_create_task, null);
         unbinder = ButterKnife.bind(this, contentView);
         dialog.setContentView(contentView);
+
+        // Initialize the Spinner view using findViewById()
+        Spinner addTaskDescriptionSpinner = contentView.findViewById(R.id.nature_spinner);
+
+        // Create an ArrayAdapter using the options array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.nature, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the Spinner view
+        addTaskDescriptionSpinner.setAdapter(adapter);
+
+        // Initialize the Priority Spinner view using findViewById()
+        Spinner prioritySpinner = contentView.findViewById(R.id.priority_spinner);
+
+// Create an ArrayAdapter using the priority options array and a default spinner layout
+        ArrayAdapter<CharSequence> priorityAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.priority, android.R.layout.simple_spinner_item);
+
+// Specify the layout to use when the list of choices appears
+        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+// Apply the adapter to the Priority Spinner view
+        prioritySpinner.setAdapter(priorityAdapter);
+
+
+        Spinner periodSpinner = contentView.findViewById(R.id.period_spinner);
+
+// Create an ArrayAdapter using the priority options array and a default spinner layout
+        ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.period, android.R.layout.simple_spinner_item);
+
+// Specify the layout to use when the list of choices appears
+        periodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+// Apply the adapter to the Priority Spinner view
+        periodSpinner.setAdapter(periodAdapter);
+
+
+
+
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         addTask.setOnClickListener(view -> {
             if(validateFields())
-            createTask();
+                createTask();
         });
         if (isEdit) {
             showTaskFromId();
@@ -156,8 +208,8 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
             Toast.makeText(activity, "Please enter a valid title", Toast.LENGTH_SHORT).show();
             return false;
         }
-        else if(addTaskDescription.getText().toString().equalsIgnoreCase("")) {
-            Toast.makeText(activity, "Please enter a valid description", Toast.LENGTH_SHORT).show();
+        else if(addTaskDescriptionSpinner.getSelectedItem().toString().equalsIgnoreCase("")) {
+            Toast.makeText(activity, "Please select a nature", Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(taskDate.getText().toString().equalsIgnoreCase("")) {
@@ -171,8 +223,10 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         else if(taskEvent.getText().toString().equalsIgnoreCase("")) {
             Toast.makeText(activity, "Please enter an event", Toast.LENGTH_SHORT).show();
             return false;
-        }
-        else {
+        }else if (addTaskPeriodSpinner.getSelectedItemPosition() == AdapterView.INVALID_POSITION) {
+            Toast.makeText(activity, "Please select a period", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
             return true;
         }
     }
@@ -189,7 +243,8 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
             protected Void doInBackground(Void... voids) {
                 Task createTask = new Task();
                 createTask.setTaskTitle(addTaskTitle.getText().toString());
-                createTask.setTaskDescrption(addTaskDescription.getText().toString());
+                createTask.setTaskDescrption(addTaskDescriptionSpinner.getSelectedItem().toString());
+                createTask.setTaskPriority(addTaskPrioritySpinner.getSelectedItem().toString());
                 createTask.setDate(taskDate.getText().toString());
                 createTask.setLastAlarm(taskTime.getText().toString());
                 createTask.setEvent(taskEvent.getText().toString());
@@ -202,7 +257,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
                     DatabaseClient.getInstance(getActivity()).getAppDatabase()
                             .dataBaseAction()
                             .updateAnExistingRow(taskId, addTaskTitle.getText().toString(),
-                                    addTaskDescription.getText().toString(),
+                                    addTaskDescriptionSpinner.getSelectedItem().toString(),
                                     taskDate.getText().toString(),
                                     taskTime.getText().toString(),
                                     taskEvent.getText().toString());
@@ -250,7 +305,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
 
             Intent alarmIntent = new Intent(activity, AlarmBroadcastReceiver.class);
             alarmIntent.putExtra("TITLE", addTaskTitle.getText().toString());
-            alarmIntent.putExtra("DESC", addTaskDescription.getText().toString());
+            alarmIntent.putExtra("DESC", addTaskDescriptionSpinner.getSelectedItem().toString());
             alarmIntent.putExtra("DATE", taskDate.getText().toString());
             alarmIntent.putExtra("TIME", taskTime.getText().toString());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(activity,count, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -263,15 +318,15 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
                 }
                 count ++;
 
-                    PendingIntent intent = PendingIntent.getBroadcast(activity, count, alarmIntent, 0);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-                        } else {
-                            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
-                        }
+                PendingIntent intent = PendingIntent.getBroadcast(activity, count, alarmIntent, 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() - 600000, intent);
                     }
+                }
                 count ++;
             }
         } catch (Exception e) {
@@ -300,11 +355,21 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     private void setDataInUI() {
+
+
+            Spinner addTaskDescriptionSpinner = contentView.findViewById(R.id.nature_spinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                    R.array.nature, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            addTaskDescriptionSpinner.setAdapter(adapter);
+
+
+// Set the selected item in the Spinner to the task's description
+        addTaskDescriptionSpinner.setSelection(adapter.getPosition(task.getTaskDescrption()));
         addTaskTitle.setText(task.getTaskTitle());
-        addTaskDescription.setText(task.getTaskDescrption());
-        taskDate.setText(task.getDate());
         taskTime.setText(task.getLastAlarm());
         taskEvent.setText(task.getEvent());
+
     }
 
     public interface setRefreshListener {

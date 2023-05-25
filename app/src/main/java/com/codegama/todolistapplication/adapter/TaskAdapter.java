@@ -3,6 +3,7 @@ package com.codegama.todolistapplication.adapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.codegama.todolistapplication.database.DatabaseClient;
 import com.codegama.todolistapplication.model.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -43,11 +45,52 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     String outputDateString = null;
     CreateTaskBottomSheetFragment.setRefreshListener setRefreshListener;
 
+    List<Task> highPriorityTasks;
+
     public TaskAdapter(MainActivity context, List<Task> taskList,  CreateTaskBottomSheetFragment.setRefreshListener setRefreshListener) {
         this.context = context;
         this.taskList = taskList;
         this.setRefreshListener = setRefreshListener;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        // Filter the taskList to only contain the first 5 tasks with "high" priority
+        List<Task> filteredList = new ArrayList<>();
+        // Filter taskList to only contain the first five tasks with "high" priority
+        // Filter taskList to only contain the first five tasks with "high" priority
+        List<Task> highPriorityTasks = new ArrayList<>();
+        List<Task> mediumPriorityTasks = null;
+        List<Task> lowPriorityTasks = null;
+
+        for (Task task : taskList) {
+            if (task.getTaskPriority().equalsIgnoreCase("high") && highPriorityTasks.size() < 5) {
+                highPriorityTasks.add(task);
+            } else if (task.getTaskPriority().equalsIgnoreCase("medium")) {
+                if (mediumPriorityTasks == null) {
+                    mediumPriorityTasks = new ArrayList<>();
+                }
+                mediumPriorityTasks.add(task);
+            } else if (task.getTaskPriority().equalsIgnoreCase("low")) {
+                if (lowPriorityTasks == null) {
+                    lowPriorityTasks = new ArrayList<>();
+                }
+                lowPriorityTasks.add(task);
+            }
+        }
+
+// If there are less than 5 high priority tasks, add medium priority tasks
+        while (highPriorityTasks.size() < 5 && mediumPriorityTasks != null && !mediumPriorityTasks.isEmpty()) {
+            highPriorityTasks.add(mediumPriorityTasks.remove(0));
+        }
+
+// If there are still less than 5 tasks, add low priority tasks
+        while (highPriorityTasks.size() < 5 && lowPriorityTasks != null && !lowPriorityTasks.isEmpty()) {
+            highPriorityTasks.add(lowPriorityTasks.remove(0));
+        }
+
+
+
+        this.taskList = taskList;
+        this.highPriorityTasks = highPriorityTasks;
+
     }
 
     @NonNull
@@ -59,9 +102,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Task task = taskList.get(position);
+        Task task = highPriorityTasks.get(position);
         holder.title.setText(task.getTaskTitle());
+        String nature =task.getTaskDescrption().toString();
         holder.description.setText(task.getTaskDescrption());
+        if (nature.equalsIgnoreCase("work")){
+            holder.description.setTextColor(Color.parseColor("#7253a4"));}
+        else if (nature.equalsIgnoreCase("home")) {
+            holder.description.setTextColor(Color.parseColor("#2489d3"));}
+        else if (nature.equalsIgnoreCase("appointment")) {
+            holder.description.setTextColor(Color.parseColor("#fe753f"));}
+        else if (nature.equalsIgnoreCase("untitled")) {
+            holder.description.setTextColor(Color.parseColor("#db604e"));}
+
+
+
         holder.time.setText(task.getLastAlarm());
         holder.status.setText(task.isComplete() ? "COMPLETED" : "UPCOMING");
         holder.options.setOnClickListener(view -> showPopUpMenu(view, position));
@@ -159,7 +214,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public int getItemCount() {
-        return taskList.size();
+        return highPriorityTasks.size();
     }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
