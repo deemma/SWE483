@@ -171,6 +171,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     viewDetailsActivity.setTaskId(task.getTaskId(), context, context);
                     viewDetailsActivity.show(context.getSupportFragmentManager(), viewDetailsActivity.getTag());
                     break;
+                case R.id.menuDetails:
+                    ViewDetailsActivity viewDetailsActivity = new ViewDetailsActivity();
+                    viewDetailsActivity.setTaskId(task.getTaskId(), context, context);
+                    viewDetailsActivity.show(context.getSupportFragmentManager(), viewDetailsActivity.getTag());
+                    break;
             }
             return false;
         });
