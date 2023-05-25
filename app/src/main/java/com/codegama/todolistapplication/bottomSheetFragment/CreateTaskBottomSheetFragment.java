@@ -66,6 +66,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
     @BindView(R.id.addTask)
     Button addTask;
     int taskId;
+
     boolean isEdit;
     Task task;
     int mYear, mMonth, mDay;
@@ -109,7 +110,7 @@ public class CreateTaskBottomSheetFragment extends BottomSheetDialogFragment {
         alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
         addTask.setOnClickListener(view -> {
             if(validateFields())
-            createTask();
+               createTask();
         });
         if (isEdit) {
             showTaskFromId();
