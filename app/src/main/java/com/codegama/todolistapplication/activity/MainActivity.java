@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.PopupMenu;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,6 +65,7 @@ public class MainActivity extends BaseActivity implements CreateTaskBottomSheetF
             createTaskBottomSheetFragment.show(getSupportFragmentManager(), createTaskBottomSheetFragment.getTag());
         });
 
+
         getSavedTasks();
 
         calendar.setOnClickListener(view -> {
@@ -87,7 +89,7 @@ public class MainActivity extends BaseActivity implements CreateTaskBottomSheetF
                         .getInstance(getApplicationContext())
                         .getAppDatabase()
                         .dataBaseAction()
-                        .getAllTasksList();
+                        .getCloseTasksList();
                 return tasks;
             }
 

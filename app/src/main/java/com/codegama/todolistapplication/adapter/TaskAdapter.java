@@ -16,12 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codegama.todolistapplication.R;
 import com.codegama.todolistapplication.activity.MainActivity;
 import com.codegama.todolistapplication.bottomSheetFragment.CreateTaskBottomSheetFragment;
+import com.codegama.todolistapplication.bottomSheetFragment.ViewDetailsActivity;
 import com.codegama.todolistapplication.database.DatabaseClient;
 import com.codegama.todolistapplication.model.Task;
 
@@ -163,12 +165,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     completeAlertDialog.setTitle(R.string.confirmation).setMessage(R.string.sureToMarkAsComplete).
                             setPositiveButton(R.string.yes, (dialog, which) -> showCompleteDialog(task.getTaskId(), position))
                             .setNegativeButton(R.string.no, (dialog, which) -> dialog.cancel()).show();
+
+                case R.id.menuDetails:
+                    ViewDetailsActivity viewDetailsActivity = new ViewDetailsActivity();
+                    viewDetailsActivity.setTaskId(task.getTaskId(), context, context);
+                    viewDetailsActivity.show(context.getSupportFragmentManager(), viewDetailsActivity.getTag());
                     break;
             }
             return false;
         });
         popupMenu.show();
     }
+
 
     public void showCompleteDialog(int taskId, int position) {
         Dialog dialog = new Dialog(context, R.style.AppTheme);
